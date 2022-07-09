@@ -4,6 +4,7 @@ const ai_level = 0;
 symbolX = 'X';
 symbol0 = 'O';
 let empty_cells = [];
+let cells = [];
 const win_matrix = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8],
     [0, 3, 6], [1, 4, 7], [2, 5, 8],
@@ -13,6 +14,7 @@ const message = document.getElementById('message');
 const winMessage = document.getElementById('win-message');
 const overlay = document.getElementById('overlay');
 const btnNewGame = document.getElementById('btn-new-game');
+const btnMoveAi = document.getElementById('move-ai');
 
 area.addEventListener('click', e => {
     if (e.target.innerHTML === '') {
@@ -21,10 +23,20 @@ area.addEventListener('click', e => {
         let win_check = check();
         if (win_check) {
             displayWinMessage(win_check)
-        }
-        ai_move()
+        } else ai_move()
     }
 })
+
+const checkCells = () => {
+    cells = document.getElementsByClassName('box');
+    empty_cells = [];
+    for (let i = 0; i < cells.length; i++) {
+        if (cells[i].innerHTML === "") {
+            empty_cells += i;
+        }
+    }
+    console.log(empty_cells);
+}
 
 const ai_move = () => {
     let ai_symb = symbol0;
@@ -33,7 +45,7 @@ const ai_move = () => {
         ai_symb = symbolX;
         user_symb = symbol0
     }
-    let cells = document.getElementsByClassName('box');
+    checkCells();
     selectCell = empty_cells[Math.floor(Math.random() * empty_cells.length)];
     if (ai_level === 2) {
         for (let i = 0; i < empty_cells.length; i++) {
@@ -53,7 +65,7 @@ const ai_move = () => {
                 selectCell = empty_cells[i];
             }
             cells[empty_cells[i]].innerHTML = '';
-            check()
+            checkCells()
             // cells[empty_cells[i]].style.display = 'block';
         }
     }
@@ -66,17 +78,7 @@ const ai_move = () => {
 }
 
 const check = () => {
-    let cells = document.getElementsByClassName('box');
-    empty_cells = [];
-    for (let i = 0; i < cells.length; i++) {
-        if (cells[i].innerHTML === "") {
-            empty_cells += i;
-        }
-    }
-    console.log(empty_cells);
-    if (empty_cells.length === 0) {
-        return 'ничья'
-    }
+    checkCells();
     for (let i = 0; i < win_matrix.length; i++) {
         let symbol = cells[win_matrix[i][0]].innerHTML;
         if (symbol !== "") {
@@ -89,12 +91,16 @@ const check = () => {
             }
         }
     }
+    if (empty_cells.length === 0) {
+        return 'ничья'
+    }
     return null;
 }
 
 const displayWinMessage = winner => {
-    winner === symbolX ? winner = 'крестики' : winner === symbol0 ? winner = 'нолики' : winner = 'все';
-    message.innerHTML = `Победили ${winner}`;
+    winner === symbolX ? winner = 'Победили крестики' : winner === symbol0 ?
+        winner = 'Победили нолики' : winner = 'Ничья!';
+    message.innerHTML = winner;
     winMessage.style.display = 'block';
 }
 
@@ -104,3 +110,4 @@ const newGame = () => {
 
 overlay.addEventListener('click', newGame)
 btnNewGame.addEventListener('click', newGame)
+btnMoveAi.addEventListener('click', ai_move);
