@@ -1,6 +1,7 @@
 const area = document.getElementById('area');
 let move = 0;
-const ai_level = 0;
+const ai_level_btn = document.getElementById('level');
+let ai_level = parseInt(ai_level_btn.innerHTML);
 symbolX = 'X';
 symbol0 = 'O';
 let empty_cells = [];
@@ -35,7 +36,7 @@ const checkCells = () => {
             empty_cells += i;
         }
     }
-    console.log(empty_cells);
+    console.log(`${move}: ${empty_cells}`);
 }
 
 const ai_move = () => {
@@ -46,27 +47,27 @@ const ai_move = () => {
         user_symb = symbol0
     }
     checkCells();
-    selectCell = empty_cells[Math.floor(Math.random() * empty_cells.length)];
+    let selectCell = empty_cells[Math.floor(Math.random() * empty_cells.length)];
+    if (ai_level > 0) {
+        for (let i = 0; i < empty_cells.length; i++) {
+            index = empty_cells[i];
+            cells[index].innerHTML = user_symb;
+            if (check() === user_symb) {
+                selectCell = index;
+            }
+            cells[index].innerHTML = '';
+            checkCells()
+        }
+    }
     if (ai_level === 2) {
         for (let i = 0; i < empty_cells.length; i++) {
-            cells[empty_cells[i]].style.display = 'none';
-            cells[empty_cells[i]].innerHTML = ai_symb;
+            index = empty_cells[i];
+            cells[index].innerHTML = ai_symb;
             if (check() === ai_symb) {
-                selectCell = empty_cells[i];
+                selectCell = index;
             }
-            cells[empty_cells[i]].innerHTML = '';
-            cells[empty_cells[i]].style.display = 'block';
-        }
-    } else if (ai_level > 0) {
-        for (let i = 0; i < empty_cells.length; i++) {
-            // cells[empty_cells[i]].style.display = 'none';
-            cells[empty_cells[i]].innerHTML = user_symb;
-            if (check() === user_symb) {
-                selectCell = empty_cells[i];
-            }
-            cells[empty_cells[i]].innerHTML = '';
+            cells[index].innerHTML = '';
             checkCells()
-            // cells[empty_cells[i]].style.display = 'block';
         }
     }
     cells[selectCell].innerHTML = ai_symb;
@@ -111,3 +112,10 @@ const newGame = () => {
 overlay.addEventListener('click', newGame)
 btnNewGame.addEventListener('click', newGame)
 btnMoveAi.addEventListener('click', ai_move);
+
+ai_level_btn.addEventListener('click', e => {
+    ai_level++;
+    if (ai_level > 2)
+        ai_level = 0;
+    ai_level_btn.innerHTML = ai_level
+})
