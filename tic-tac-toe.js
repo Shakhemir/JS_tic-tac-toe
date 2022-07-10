@@ -21,7 +21,7 @@ area.addEventListener('click', e => {
     if (e.target.innerHTML === '') {
         move % 2 === 0 ? e.target.innerHTML = symbolX : e.target.innerHTML = symbol0;
         move++;
-        let win_check = check();
+        let win_check = check(true);
         if (win_check) {
             displayWinMessage(win_check)
         } else ai_move()
@@ -72,13 +72,13 @@ const ai_move = () => {
     }
     cells[selectCell].innerHTML = ai_symb;
     move++;
-    let win_check = check();
+    let win_check = check(true);
     if (win_check) {
         displayWinMessage(win_check)
     }
 }
 
-const check = () => {
+const check = (blink = false) => {
     checkCells();
     for (let i = 0; i < win_matrix.length; i++) {
         let symbol = cells[win_matrix[i][0]].innerHTML;
@@ -88,6 +88,11 @@ const check = () => {
                 cells[win_matrix[i][1]].innerHTML === symbol &&
                 cells[win_matrix[i][2]].innerHTML === symbol
             ) {
+                if (blink) {
+                    cells[win_matrix[i][0]].style.animation = 'blinker 1s linear infinite';
+                    cells[win_matrix[i][1]].style.animation = 'blinker 1s linear infinite';
+                    cells[win_matrix[i][2]].style.animation = 'blinker 1s linear infinite';
+                }
                 return symbol;
             }
         }
